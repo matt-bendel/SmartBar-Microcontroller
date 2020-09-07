@@ -3,18 +3,18 @@
 #define LED_PIN 6       // the pin for the LED strip
 #define LED_COUNT 11
 
-#define Z_STEP 7
-#define Z_DIR 8
-#define Z_EN 9
+#define Z_STEP 10
+#define Z_DIR 11
+#define Z_EN 12
 
-#define X_STEP 10
-#define X_DIR 11
-#define X_EN 12
+#define X_STEP 7
+#define X_DIR 8
+#define X_EN 9
 
 #define STEPS_TO_DISPENSE 2100
 const int  CONTACT_PIN = 2;    // the pin that the pushbutton is attached to
-const int PUMP_PINS[] = {45, 43, 41, 39, 37, 35, 33, 31};
-const int NUM_STEPS[] = {25, 200, 400, 600, 800, 1000, 1200};
+const int PUMP_PINS[] = {45, 43, 41, 39, 37, 35};
+const int NUM_STEPS[] = {25, 535, 1035, 1535, 2035, 2535, 3035};
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -47,9 +47,9 @@ void home_stepper() {
       }
       
       digitalWrite(X_STEP, HIGH);
-      delay(2);
+      delay(1);
       digitalWrite(X_STEP, LOW);
-      delay(2);
+      delay(1);
     }
   }
 
@@ -63,12 +63,14 @@ void home_stepper() {
   
   for (int i = 0; i < 25; i++) {
       digitalWrite(X_STEP, HIGH);
-      delay(2);
+      delay(1);
       digitalWrite(X_STEP, LOW);
-      delay(2);
+      delay(1);
   }
 
   digitalWrite(X_EN, HIGH);
+
+  currentPos = 0;
 }
 
 void stepper_drive(int location) {
@@ -97,9 +99,9 @@ void stepper_drive(int location) {
   
   for (int i = 0; i < steps; i++) {
     digitalWrite(X_STEP, HIGH);
-    delay(2);
+    delay(1);
     digitalWrite(X_STEP, LOW);
-    delay(2);
+    delay(1);
   }
 
   digitalWrite(X_EN, HIGH);
@@ -130,11 +132,11 @@ void dispense_liquor(int num_shots) {
     digitalWrite(Z_EN, LOW);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
     digitalWrite(Z_DIR, HIGH);
     
-    for (int i = 0; i < 500; i++) {
+    for (int i = 0; i < 2175; i++) {
       digitalWrite(Z_STEP, HIGH);
-      delay(5);
+      delay(2);
       digitalWrite(Z_STEP, LOW);
-      delay(5);
+      delay(2);
     }
   
     digitalWrite(Z_STEP, LOW);
@@ -145,11 +147,11 @@ void dispense_liquor(int num_shots) {
     digitalWrite(Z_EN, LOW);
     digitalWrite(Z_DIR, LOW);
     
-    for (int i = 0; i < 500; i++) {
+    for (int i = 0; i < 2175; i++) {
       digitalWrite(Z_STEP, HIGH);
-      delay(5);
+      delay(2);
       digitalWrite(Z_STEP, LOW);
-      delay(5);
+      delay(2);
     }
     
     digitalWrite(Z_EN, HIGH);
@@ -291,6 +293,14 @@ void loop(){
     }
 
     Serial.write("complete\n");
+
+    for (int i = 0; i < LED_COUNT; i++) {
+      strip.setPixelColor(i, RED);
+    }
+    
+    strip.show();
+    
+    delay(5000);
     
     // SET LED TO RAINBOW
     rainbow_cycle(20);
