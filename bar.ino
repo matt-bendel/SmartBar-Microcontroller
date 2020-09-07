@@ -165,9 +165,57 @@ void dispense_liquor(int num_shots) {
   return;
 }
 
+void dispense_liquor_higher(int num_shots) {
+  for (int i = 0; i < LED_COUNT; i++) {
+    strip.setPixelColor(i, OFF);
+  }
+
+  strip.show();
+
+  for (int j = 0; j < num_shots; j++) {
+    digitalWrite(Z_STEP, LOW);
+    
+    delay(500);
+    
+    digitalWrite(Z_EN, LOW);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+    digitalWrite(Z_DIR, HIGH);
+    
+    for (int i = 0; i < 2250; i++) {
+      digitalWrite(Z_STEP, HIGH);
+      delay(2);
+      digitalWrite(Z_STEP, LOW);
+      delay(2);
+    }
+  
+    digitalWrite(Z_STEP, LOW);
+    digitalWrite(Z_EN, HIGH);
+  
+    delay(3000);
+  
+    digitalWrite(Z_EN, LOW);
+    digitalWrite(Z_DIR, LOW);
+    
+    for (int i = 0; i < 2250; i++) {
+      digitalWrite(Z_STEP, HIGH);
+      delay(2);
+      digitalWrite(Z_STEP, LOW);
+      delay(2);
+    }
+    
+    digitalWrite(Z_EN, HIGH);
+    
+    delay(1000);
+  
+    digitalWrite(Z_EN, HIGH);
+    
+    delay(1000);
+  }
+  return;
+}
+
 void dispense_mixer(int pump) {
   digitalWrite(PUMP_PINS[pump - 1], LOW);
-  delay(2500);
+  delay(5000);
   digitalWrite(PUMP_PINS[pump - 1], HIGH);
 
   return;
@@ -260,8 +308,13 @@ void loop(){
       int num_shots = Serial.readStringUntil('\n').toInt();
       
       delay(1500);
+
+      if (currentPos != 4) {
+        dispense_liquor(num_shots);
+      } else {
+        dispense_liquor_higher(num_shots);
+      }
       
-      dispense_liquor(num_shots);
       location = Serial.readStringUntil('\n').toInt();
     }
 
